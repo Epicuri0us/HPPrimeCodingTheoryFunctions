@@ -1,0 +1,155 @@
+EXPORT prob(values)
+BEGIN
+  LOCAL sum=sum(values), i, nl=char(10);
+  
+  PRINT(nl + "P(X) = X / Σ(x_i)");
+  PRINT("  = " + STRING(values) + " / " + sum);
+  FOR i FROM 1 TO SIZE(values) DO
+    values(i):=values(i)/sum;
+  END;
+  PRINT("  = " + STRING(values));
+  
+  RETURN(values);
+END;
+
+EXPORT i_info(x)
+BEGIN
+  LOCAL nl=char(10);
+  
+  PRINT(nl + "I(x) = -ld(x) = -ld(" + x + ")");
+  x:=-LOG(x,2);
+  PRINT("  = " + x);
+  
+  RETURN(x);
+END;
+
+EXPORT h_entropy(values)
+BEGIN
+  LOCAL result=0, nl=char(10), i;
+  
+  PRINT(nl + "H(X) = Σ(p_i * I(p_i)) = Σ(p_i * -ld(p_i))");
+  
+  FOR i FROM 1 TO SIZE(values) DO
+    IF i==1 THEN
+      PRINT("  = " + values(i) + " * -ld(" + values(i) + ")");
+    ELSE
+      PRINT("  + " + values(i) + " * -ld(" + values(i) + ")");
+    END;
+    result:=result + values(i) * -LOG(values(i),2);
+  END;
+
+  PRINT("  = " + result);
+  
+  RETURN(result);
+END;
+
+EXPORT h0_max_entropy(n)
+BEGIN
+  LOCAL nl=char(10);
+  
+  PRINT(nl + "H0(N) = ld(N)");
+  PRINT("  = ld(" + n + ")");
+  n:=LOG(n,2);
+  PRINT("  = " + n);
+  
+  RETURN(n);
+END;
+
+// TODO: wat
+EXPORT res_err_prob(v1, v2)
+BEGIN
+  
+  RETURN(0);
+END;
+
+EXPORT h_yx(p, n)
+BEGIN
+  LOCAL i, j, result=0, nl=char(10);
+  
+  PRINT(nl + "H(Y|X) = -Σ(Σ(p(x_j, y_i) * ld(p(y_j, x_i)))");
+  PRINT("  = -Σ(Σ(p(x_i) * p(y_j|x_i) * ld(p(y_j, x_i)))");
+  FOR i FROM 1 TO SIZE(p) DO
+    FOR j FROM 1 TO rowDim(n) DO
+      IF i==1 AND j==1 THEN
+        PRINT("  = " + p(i) + " * " + n(i,j) + " * ld(" + n(i,j) + ")");
+      ELSE
+        PRINT("  + " + p(i) + " * " + n(i,j) + " * ld(" + n(i,j) + ")");
+      END;
+      result:=result + p(i) * n(i,j) * log(n(i,j), 2);
+    END;
+  END;
+  PRINT("  = " + -result);
+  
+  RETURN(-result);
+END;
+
+// TODO: wat
+EXPORT prob_y(p, n)
+BEGIN
+  LOCAL nl=char(10);
+  
+  PRINT(nl + "px(x) p_yx");
+  PRINT("  = ");
+  n:=LOG(n,2);
+  PRINT("  = " + n);
+  
+  RETURN(n);
+END;
+
+EXPORT t_transinfo(p, n)
+BEGIN
+  // TODO: calls the other functions
+END;
+
+// Doesn't seem right
+EXPORT kanalmatrix_sym(p, n)
+BEGIN
+  LOCAL y_1, y_2, nl=char(10);
+  
+  PRINT(nl + "y_1 = x_1 * a + x_2 * (1-a)");
+  PRINT("y_2 = x_1 * (1-d) + x_2 * d");
+  PRINT("  =");
+  PRINT(n(1) + " = " + p(1) + " * a + " + p(2) + " * (1-a)");
+  PRINT(n(2) + " = " + p(1) + " * (1-d) + " + p(2) + " * d");
+  PRINT("  =");
+
+  y_1:=fsolve('n(1)=p(1)*X+p(2)*(1-X)', X);
+  y_2:=fsolve('n(1)=p(1)*(1-Y)+p(2)*Y', Y);
+
+  PRINT([[y_1, y_2], [y_2, y_1]]);
+
+  RETURN([[y_1, y_2], [y_2, y_1]]);
+END;
+
+EXPORT rsa_phi(n)
+BEGIN
+  LOCAL i, values={}, nl=char(10);
+  
+  FOR i FROM 1 TO n-1 DO
+    IF gcd(i, n) == 1 THEN
+      values(size(values)+1):=i;
+    END;
+  END;
+
+  PRINT(values);
+  PRINT("φ(" + n + ") = " + size(values));
+  
+  RETURN(size(values));
+END;
+
+EXPORT rsa_euklid(p, n)
+BEGIN
+  LOCAL i, values={}, nl=char(10);
+  
+  FOR i FROM 1 TO n-1 DO
+    IF gcd(i, n) == 1 THEN
+      values(size(values)+1):=i;
+    END;
+  END;
+
+  PRINT(values);
+  PRINT("φ(" + n + ") = " + size(values));
+  
+  RETURN(size(values));
+END;
+
